@@ -43,6 +43,14 @@ class Index extends Controller{
         $maddby = input('post.maddby', '', 'strip_tags');
         $bgimg = input('post.bgimg', '', 'strip_tags');
 
+        if($mcontent == '')
+        {
+            $this->error('请输入留言内容');
+        }
+        if($maddby == '')
+        {
+            $maddby = '匿名';
+        }
         $add_data = array(
             'mcontent' => $mcontent,
             'addtime' => time(),
