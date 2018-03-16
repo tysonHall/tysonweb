@@ -1,0 +1,27 @@
+{extend name="public/base" /}
+{block name="mybody"}
+
+<blockquote>
+	<p>嘿，我的老伙计，你来了~~~</p>
+	<p>我要走了，离开厦门这个好地方了。</p>
+	<p>将去往青岛，展开新的生活。</p>
+	<p>来留下几句话吧，我会珍藏起来的。</p>
+	<p>☺</p>
+</blockquote>
+<div>
+	<form method="post" class="form" action="{:url('index/index/addmsg')}">
+		<div class="form-group">
+			<label for="mcontent">留言内容</label>
+			<textarea class="form-control" id="mcontent" name="mcontent" placeholder="随便说"></textarea>
+		</div>
+		<div class="form-group">
+			<label for="maddby">您的姓名</label>
+			<input type="text" class="form-control" id="maddby" name="maddby" placeholder="随便写">
+		</div>
+		<button class="btn btn-success" type="submit">提交</button>
+		<a href="/" class="btn btn-primary">返回</a>
+	</form>
+</div>
+{/block}
+{block name="js"}
+{/block}

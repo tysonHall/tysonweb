@@ -1,21 +1,71 @@
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-	<button onclick="window.location.reload();">刷新</button>
-	<p>{$show_msg['mcontent']}</p>
-	<span>{$show_msg['maddby']}</span>
-	<span>{$show_msg['addtime']|date='Y-m-d H:i:s',###}</span>
-	<p>共{$count}留言</p>
-	<div>
-	<form method="post" action="{:url('index/index/addmsg')}">
-		<textarea name="mcontent"></textarea>
-		<input name="maddby" type="text">
-		<input name="bgimg" type="hidden">
-		<button type="submit">提交</button>
-	</form>
-</div>
-</body>
-</html>
+{extend name="public/base" /}
+{block name="mybody"}
+	<input type="hidden" id="contentid" value="{$show_msg['id']}">
+	<div class="msgimg"><img src="{$show_msg['bgimg']}"></div>
+	<p class="mcontent">{$show_msg['mcontent']}</p>
+	<div class="infos">
+		<span class="maddby">—— {$show_msg['maddby']}</span>
+		<span class="addtime">{$show_msg['addtime']|date='Y-m-d H:i',###}</span>
+	</div>
+	<p class="mcount">共{$count}留言</p>
+	<span class="btn btn-success" onclick="getnew_msg()">换一条</span>
+	<span class="btn btn-success" onclick="getnew_img()">换图片</span>
+	<span class="btn btn-primary" onclick="ilikethis()" id="likebtn">赞 (<span id="likecount">{$show_msg['likecount']}</span>)</span>
+	<a class="btn btn-info" href="/index/index/addform">我也要留言</a>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+$(function(){
+	reload_img();
+})
+	function reload_img()
+	{
+		var msgimg_width = $('.msgimg').css("width");
+		msgimg_width = msgimg_width.replace('px', '');
+		var msgimg_heigth = 4 / 3 * msgimg_width;
+		$('.msgimg').css("height", msgimg_heigth+'px');
+		$('.msgimg img').css("width", msgimg_width);
+		var imgheight = $('.msgimg img').css("height");
+		imgheight = imgheight.replace('px', '');
+		var imgmargin = (msgimg_heigth-imgheight)/2;
+		$('.msgimg img').css("margin-top", imgmargin + 'px');
+	}
+	function ilikethis()
+	{
+		var contentid = $('#contentid').val();
+		$.getJSON('/index/index/ilikethis', {'contentid':contentid}, function(data){
+	        if(data.result > 0)
+	        {
+	            $('#likecount').html(data.result);
+	        }
+	    })
+	}
+	function getnew_img()
+	{
+		var now_url = $('.msgimg img').attr('src');
+		$.getJSON('/index/index/getnew_img', {'now_url':now_url}, function(data){
+	        if(data.url != '')
+	        {
+	            $('.msgimg img').attr('src', data.url);
+	            $('.msgimg img').load(function(){
+	            	reload_img();
+	            })
+	        }
+	    })
+	}
+	function getnew_msg()
+	{
+		var now_msgid = $('#contentid').val();
+		$.getJSON('/index/index/getnew_msg', {'now_msgid':now_msgid}, function(data){
+	        if(data.id != 0)
+	        {
+	        	$('#contentid').val(data.id);
+	            $('.mcontent').html(data.mcontent);
+	            $('.maddby').html('—— '+data.maddby);
+	            $('.addtime').html(data.addtime);
+	            $('.likecount').html(data.likecount);
+	        }
+	    })
+	}
+</script>
+{/block}
